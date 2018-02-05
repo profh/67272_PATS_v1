@@ -6,7 +6,7 @@ class CreateDosages < ActiveRecord::Migration[5.1]
       t.integer :units_given
       t.float :discount, default: 0.00
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

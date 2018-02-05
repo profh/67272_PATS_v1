@@ -55,24 +55,22 @@ namespace :db do
       p.length_of_time = vars[0].to_i
       p.active = true
       p.save!
+
+      # add one older cost
+      pc_older = ProcedureCost.new
+      pc_older.procedure_id = p.id
+      pc_older.cost = (((vars[1].to_i/100) * (0.9))*100).to_i 
+      originally_started = 150  # since no pet is older than 12...
+      pc_older.start_date = originally_started.months.ago.to_date
+      pc_older.save!
       
       # add current cost of procedure
       pc = ProcedureCost.new
       pc.procedure_id = p.id
       pc.cost = vars[1].to_i
-      started = rand(4) + 2
-      pc.start_date = started.months.ago.to_date
-      pc.end_date = nil
+      started = rand(4) + 1
+      pc.start_date = started.years.ago.to_date
       pc.save!
-      
-      # add one older cost
-      # pc_older = ProcedureCost.new
-      # pc_older.procedure_id = p.id
-      # pc_older.cost = (((vars[1].to_i/100) * (0.9))*100).to_i 
-      # originally_started = 145 #rand(3) + 7
-      # pc_older.start_date = originally_started.months.ago.to_date
-      # pc_older.end_date = pc.start_date
-      # pc_older.save!
       
     end
     # get an array of procedure_ids to use later
@@ -112,23 +110,21 @@ namespace :db do
         am.save!
       end
       
+      # add an older cost
+      mc_older = MedicineCost.new
+      mc_older.medicine_id = m.id
+      mc_older.cost_per_unit = rand(50) + 20 
+      originally_started = 150 
+      mc_older.start_date = originally_started.months.ago.to_date
+      mc_older.save!
+
       # add current cost of medicine
       mc = MedicineCost.new
       mc.medicine_id = m.id
-      mc.cost_per_unit = rand(50) + 20
-      started = rand(4) + 2
-      mc.start_date = started.months.ago.to_date
-      mc.end_date = nil
+      mc.cost_per_unit = mc_older.cost_per_unit + (10 - rand(5))
+      started = rand(4) + 1
+      mc.start_date = started.years.ago.to_date
       mc.save!
-      
-      # add one older cost
-      # mc_older = MedicineCost.new
-      # mc_older.medicine_id = m.id
-      # mc_older.cost_per_unit = mc.cost_per_unit - (10 - rand(5)) 
-      # originally_started = 145 #rand(3) + 7
-      # mc_older.start_date = originally_started.months.ago.to_date
-      # mc_older.end_date = mc.start_date
-      # mc_older.save!
     end
     # get an array of medicine_ids to use later
     medicine_ids = Medicine.alphabetical.all.map{|m| m.id}

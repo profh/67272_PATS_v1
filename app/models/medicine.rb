@@ -1,6 +1,6 @@
 class Medicine < ApplicationRecord
-  include PgSearch
-  pg_search_scope :pgsearch, :against => [:name, :description], using: {tsearch: {dictionary: "english"}}
+  # include PgSearch
+  # pg_search_scope :pgsearch, :against => [:name, :description], using: {tsearch: {dictionary: "english"}}
   
   # Relationships
   has_many :animal_medicines
@@ -34,13 +34,13 @@ class Medicine < ApplicationRecord
     curr_cost_of_medicine.first.cost_per_unit
   end
   
-  def self.ftsearch(query)
-    if query.present?
-      where("to_tsvector('english', description) @@ to_tsquery(:q)", :q => query)
-    else
-      nil
-    end
-  end
+  # def self.ftsearch(query)
+  #   if query.present?
+  #     where("to_tsvector('english', description) @@ to_tsquery(:q)", :q => query)
+  #   else
+  #     nil
+  #   end
+  # end
 
   # Callbacks
   # before_destroy :is_destroyable?

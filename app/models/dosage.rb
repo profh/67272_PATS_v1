@@ -17,6 +17,11 @@ class Dosage < ApplicationRecord
   # make sure that the medicine is appropriate for the animal getting it
   validate :medicine_matches_animal_type
 
+  # Callbacks
+  after_create :reduce_stock_amount_of_medicine_used
+  before_create :update_total_cost_of_visit
+  before_destroy :refund_amount_in_cost_of_visit
+
   # Use private methods to execute the custom validations
   # -----------------------------
   private
@@ -40,6 +45,38 @@ class Dosage < ApplicationRecord
     unless possible_medicine_ids.include?(self.medicine_id)
       errors.add(:medicine, "is inappropriate for this animal")
     end
+  end
+
+  def update_total_cost_of_visit
+    visit = self.visit
+    previous_charge = (visit.total_charge.nil? ? 0 : visit.total_charge)
+    previous_costs = MedicineCost.for_medicine(self.medicine_id).for_date(self.visit.date)
+    if previous_costs.empty?  # shouldn't be the case, but...
+      cost_per_unit_of_new_meds = 0
+    else
+      cost_per_unit_of_new_meds = previous_costs.first.cost_per_unit
+    end
+    new_charge = previous_charge + (self.units_given * cost_per_unit_of_new_meds * (1 - self.discount))
+    visit.update_attribute(:total_charge, new_charge)
+  end
+
+  def refund_amount_in_cost_of_visit
+    visit = self.visit
+    previous_charge = visit.total_charge
+    previous_costs = MedicineCost.for_medicine(self.medicine_id).for_date(self.visit.date)
+    if previous_costs.empty?  # shouldn't be the case, but...
+      cost_per_unit_of_old_meds = 0
+    else
+      cost_per_unit_of_old_meds = previous_costs.first.cost_per_unit
+    end
+    revised_charge = previous_charge - (self.units_given * cost_per_unit_of_old_meds * (1 - self.discount))
+    visit.update_attribute(:total_charge, revised_charge)    
+  end
+
+  def reduce_stock_amount_of_medicine_used
+    previous_amount = self.medicine.stock_amount
+    new_amount = previous_amount - self.units_given
+    self.medicine.update_attribute(:stock_amount, new_amount)
   end
 
 end

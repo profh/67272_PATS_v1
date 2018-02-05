@@ -5,7 +5,7 @@ class CreateAnimalMedicines < ActiveRecord::Migration[5.1]
       t.references :medicine, foreign_key: true
       t.integer :recommended_num_of_units
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

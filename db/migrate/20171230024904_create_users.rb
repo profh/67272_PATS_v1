@@ -8,7 +8,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :password_digest
       t.boolean :active
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

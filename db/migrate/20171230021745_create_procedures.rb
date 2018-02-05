@@ -6,7 +6,7 @@ class CreateProcedures < ActiveRecord::Migration[5.1]
       t.integer :length_of_time
       t.boolean :active, default: true
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

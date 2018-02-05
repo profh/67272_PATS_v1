@@ -1,6 +1,6 @@
 class Owner < ApplicationRecord
-  include PgSearch
-  pg_search_scope :that_sounds_like, :against => [:last_name, :first_name], :using => :dmetaphone
+  # include PgSearch
+  # pg_search_scope :that_sounds_like, :against => [:last_name, :first_name], :using => :dmetaphone
   # pg_search_scope :that_sounds_like, :against => :last_name, :using => :dmetaphone
   
   # create a callback that will strip non-digits before saving to db

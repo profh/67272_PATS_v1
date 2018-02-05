@@ -67,11 +67,11 @@ class MedicineTest < ActiveSupport::TestCase
     end
 
     # test the method self.ftsearch
-    should "have a class method called ftsearch" do
-      assert_equal [@carprofen], Medicine.ftsearch("inflammation")
-      assert_equal [@amoxicillin], Medicine.ftsearch("infect")
-      assert_nil Medicine.ftsearch("")
-    end
+    # should "have a class method called ftsearch" do
+    #   assert_equal [@carprofen], Medicine.ftsearch("inflammation")
+    #   assert_equal [@amoxicillin], Medicine.ftsearch("infect")
+    #   assert_nil Medicine.ftsearch("")
+    # end
 
     should "show that an medicine that has been used cannot be destroyed" do
       create_animals

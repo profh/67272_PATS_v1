@@ -34,5 +34,26 @@ class MedicineCostTest < ActiveSupport::TestCase
       assert_equal [30, 40, 50], MedicineCost.current.map{|o| o.cost_per_unit}.sort
     end
 
+    # test the scope 'for_medicine'
+    should "shows that there are medicine costs filtered by medicine" do
+      assert_equal 2, MedicineCost.for_medicine(@rabies.id).count
+      assert_equal 1, MedicineCost.for_medicine(@carprofen.id).count
+    end
+
+    # test the scope 'for_date'
+    should "find the correct costs for a given date" do
+      assert_equal [30, 40, 50], MedicineCost.for_date(3.months.ago.to_date).map{|o| o.cost_per_unit}.sort
+      assert_equal [25, 50], MedicineCost.for_date(320.days.ago.to_date).map{|o| o.cost_per_unit}.sort
+      assert_equal [], MedicineCost.for_date(13.months.ago.to_date)
+    end
+
+    # test the callback for setting the old price end date
+    should "verify that the old price end_date set to today" do
+      assert_nil @carprofen_c1.end_date
+      @change_cost = FactoryBot.create(:medicine_cost, medicine: @carprofen, start_date: 1.month.ago.to_date, cost_per_unit: 60)
+      @carprofen_c1.reload
+      assert_equal 1.month.ago.to_date, @carprofen_c1.end_date
+    end
+
   end
 end

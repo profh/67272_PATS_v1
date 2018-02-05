@@ -34,5 +34,26 @@ class ProcedureCostTest < ActiveSupport::TestCase
       assert_equal [2000, 3000, 4000], ProcedureCost.current.map{|o| o.cost}.sort
     end
 
+    # test the scope 'for_procedure'
+    should "shows that there are procedure costs filtered by procedure" do
+      assert_equal 2, ProcedureCost.for_procedure(@checkup.id).count
+      assert_equal 1, ProcedureCost.for_procedure(@xray.id).count
+    end
+
+    # test the scope 'for_date'
+    should "find the correct costs for a given date" do
+      assert_equal [2000, 3000, 4000], ProcedureCost.for_date(3.months.ago.to_date).map{|o| o.cost}.sort
+      assert_equal [2500, 4000], ProcedureCost.for_date(320.days.ago.to_date).map{|o| o.cost}.sort
+      assert_equal [], ProcedureCost.for_date(13.months.ago.to_date)
+    end
+
+    # test the callback for setting the old price end date
+    should "verify that the old price end_date set to today" do
+      assert_nil @xray_c1.end_date
+      @change_cost = FactoryBot.create(:procedure_cost, procedure: @xray, start_date: 1.month.ago.to_date, cost: 4500)
+      @xray_c1.reload
+      assert_equal 1.month.ago.to_date, @xray_c1.end_date
+    end
+
   end
 end

@@ -7,8 +7,8 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '5.1.4'
-# Use postgresql as the database for Active Record
-gem 'pg', '0.21.0'
+# Use sqlite3 as the database for Active Record
+gem 'sqlite3', '1.3.13'
 # Use Puma as the app server
 gem 'puma', '3.11.0'
 # Use SCSS for stylesheets
@@ -43,7 +43,7 @@ gem 'cancancan', '2.1.2'
 gem 'validates_timeliness', '4.0.2'
 gem 'time_date_helpers', '0.0.2'
 gem 'carrierwave', '1.2.2'
-gem 'pg_search', '2.1.2'
+# gem 'pg_search', '2.1.2'
 gem 'will_paginate', '3.1.6'
 
 group :development, :test do

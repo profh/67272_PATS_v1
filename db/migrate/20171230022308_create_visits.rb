@@ -7,7 +7,7 @@ class CreateVisits < ActiveRecord::Migration[5.1]
       t.boolean :overnight_stay
       t.integer :total_charge  # should default to zero, but want to show ||= later...
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

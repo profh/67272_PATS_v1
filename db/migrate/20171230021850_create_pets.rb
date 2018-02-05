@@ -8,7 +8,7 @@ class CreatePets < ActiveRecord::Migration[5.1]
       t.date :date_of_birth
       t.boolean :active, default: true
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

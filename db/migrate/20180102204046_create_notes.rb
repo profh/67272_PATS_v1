@@ -8,7 +8,7 @@ class CreateNotes < ActiveRecord::Migration[5.1]
       t.references :user, foreign_key: true
       t.datetime :written_on
 
-      t.timestamps
+      # t.timestamps
     end
   end
 end

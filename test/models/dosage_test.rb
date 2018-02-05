@@ -17,6 +17,7 @@ class DosageTest < ActiveSupport::TestCase
       create_pets
       create_visits
       create_medicines
+      create_medicine_costs
       create_animal_medicines
       create_dosages
     end
@@ -28,6 +29,7 @@ class DosageTest < ActiveSupport::TestCase
       destroy_pets
       destroy_animals
       destroy_owners
+      destroy_medicine_costs
       destroy_medicines
     end
   
@@ -66,6 +68,32 @@ class DosageTest < ActiveSupport::TestCase
       
       # destroy the visit by Dusty
       @visit_dusty.destroy    
+    end
+
+    # test callback 'update_total_cost_of_visit'
+    should "raise the total cost of visit for each dosage given" do
+      old_charge = @visit1.total_charge
+      visit1_d2 = FactoryBot.create(:dosage, visit: @visit1, medicine: @amoxicillin)
+      unit_costs_for_d2 = MedicineCost.for_medicine(@amoxicillin.id).for_date(@visit1.date).first.cost_per_unit
+      additional_charge = visit1_d2.units_given.to_f * (1-visit1_d2.discount) * unit_costs_for_d2
+      assert_equal (old_charge + additional_charge), @visit1.total_charge
+    end
+
+    # test callback 'refund_amount_in_cost_of_visit'
+    should "reduce the total cost of visit for each dosage destroyed" do
+      old_charge = @visit2.total_charge
+      unit_costs_for_v2d2 = MedicineCost.for_medicine(@amoxicillin.id).for_date(@visit2.date).first.cost_per_unit
+      refund_amount = @visit2_d2.units_given.to_f * (1-@visit2_d2.discount) * unit_costs_for_v2d2
+      @visit2_d2.destroy
+      assert_equal (old_charge - refund_amount), @visit2.total_charge
+    end
+
+    # test callback 'reduce_stock_amount_of_medicine_used'
+    should "reduce stock amount left for each dosage given" do
+      original_stock_amount = @amoxicillin.stock_amount
+      visit1_d2 = FactoryBot.create(:dosage, visit: @visit1, medicine: @amoxicillin)
+      @amoxicillin.reload
+      assert_equal (original_stock_amount - visit1_d2.units_given), @amoxicillin.stock_amount
     end
 
   end
